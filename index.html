@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10162b">
+  <title>DragType by Hanippp</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1223;
+      --panel: #171f37;
+      --panel-2: #202a47;
+      --line: rgba(190, 207, 255, .14);
+      --text: #f3f6ff;
+      --muted: #9eabc9;
+      --lime: #c7f36b;
+      --lime-dark: #24381c;
+      --blue: #78a9ff;
+      --red: #ff7c88;
+      --gold: #ffd66b;
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(800px 420px at 8% -10%, rgba(82, 108, 202, .22), transparent 65%),
+        radial-gradient(650px 360px at 100% 8%, rgba(157, 111, 255, .13), transparent 62%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    button, input, select { font: inherit; }
+    button, select { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 16px 0 32px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 28px; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark { width: 46px; height: 46px; border-radius: 15px; background: var(--lime); color: #172116; display: grid; place-items: center; font-size: 25px; box-shadow: 0 8px 24px rgba(199,243,107,.14); }
+    .brand h1 { margin: 0; font-size: 20px; letter-spacing: -.04em; }
+    .brand p { margin: 1px 0 0; font-size: 12px; color: var(--muted); letter-spacing: .13em; text-transform: uppercase; }
+    .class-pill { border: 1px solid var(--line); border-radius: 999px; padding: 8px 13px; color: #cbd5f4; font-size: 12px; white-space: nowrap; background: rgba(255,255,255,.025); }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); gap: 24px; align-items: end; margin-bottom: 24px; }
+    .eyebrow { color: var(--lime); text-transform: uppercase; letter-spacing: .16em; font-size: 11px; font-weight: 800; margin: 0 0 8px; }
+    .hero h2 { margin: 0; font-size: clamp(34px, 5vw, 56px); line-height: .98; letter-spacing: -.065em; }
+    .hero h2 span { color: var(--lime); }
+    .hero-copy { color: var(--muted); max-width: 590px; margin: 14px 0 0; font-size: 15px; }
+    .mode-card { padding: 17px; background: rgba(23,31,55,.8); border: 1px solid var(--line); border-radius: 18px; }
+    .mode-card label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+    .mode-row { display: flex; gap: 10px; align-items: center; }
+    select { width: 100%; min-width: 0; background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 11px; padding: 11px 12px; }
+    .mode-note { color: var(--muted); font-size: 11px; margin: 9px 0 0; }
+    .metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .metric { background: linear-gradient(145deg, rgba(32,42,71,.95), rgba(23,31,55,.96)); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; min-width: 0; }
+    .metric-label { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 7px; }
+    .metric-value { font-size: clamp(23px, 3vw, 32px); line-height: 1.2; font-weight: 800; letter-spacing: -.04em; margin-top: 7px; font-variant-numeric: tabular-nums; }
+    .metric-sub { color: #7f8db0; font-size: 11px; margin-top: 3px; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: start; }
+    .panel { background: rgba(23,31,55,.92); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: 0 18px 45px rgba(0,0,0,.12); }
+    .panel-head { padding: 19px 21px 14px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+    .panel-title { margin: 0; font-size: 16px; letter-spacing: -.025em; }
+    .panel-desc { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+    .status-chip { flex: 0 0 auto; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; padding: 6px 9px; border-radius: 8px; background: rgba(199,243,107,.1); color: var(--lime); border: 1px solid rgba(199,243,107,.2); }
+    .typing-head-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
+    .btn-refresh { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 8px 10px; font-size: 11px; }
+    .btn-refresh svg { width: 15px; height: 15px; display: block; flex: 0 0 auto; }
+    @media (max-width: 560px) {
+      .typing-head-actions { flex-wrap: wrap; }
+      .btn-refresh span { display: none; }
+      .btn-refresh { width: 34px; height: 34px; padding: 8px; }
+    }
+    .track-wrap { padding: 4px 17px 18px; }
+    .track { height: 202px; overflow: hidden; position: relative; border-radius: 15px; border: 1px solid rgba(255,255,255,.08); background: #131a2e; }
+    .track::before { content: ""; position: absolute; inset: 0; opacity: .20; background: repeating-linear-gradient(90deg, transparent 0 44px, rgba(255,255,255,.08) 44px 46px); }
+    .track-sky { position: absolute; inset: 0 0 55% 0; background: linear-gradient(180deg, rgba(63,83,137,.15), rgba(63,83,137,0)); }
+    .track-label { position: absolute; top: 10px; left: 13px; z-index: 2; font-size: 9px; font-weight: 800; letter-spacing: .16em; color: #677798; }
+    .lane { position: absolute; left: 0; right: 0; height: 62px; }
+    .lane.lane-player { top: 43px; }
+    .lane.lane-rival { top: 123px; }
+    .lane-line { position: absolute; top: 29px; left: 0; right: 0; border-top: 2px dashed rgba(180,196,232,.22); }
+    .lane-name { position: absolute; left: 12px; top: 0; font-size: 10px; text-transform: uppercase; letter-spacing: .09em; font-weight: 800; color: #aab8d9; }
+    .car { position: absolute; z-index: 3; left: 5%; top: 9px; width: 72px; height: 39px; transform: translateX(-8%); filter: drop-shadow(0 7px 6px rgba(0,0,0,.36)); transition: left .26s ease-out; white-space: nowrap; }
+    .car-svg { display: block; width: 100%; height: 100%; overflow: visible; direction: ltr; transform: none !important; }
+    .car.player { filter: drop-shadow(0 0 9px rgba(199,243,107,.28)); }
+    .car.rival { filter: drop-shadow(0 0 7px rgba(120,169,255,.2)); }
+    .car-body-player { fill: #c7f36b; }
+    .car-body-rival { fill: #78a9ff; }
+    .car-window { fill: #18243e; stroke: rgba(255,255,255,.7); stroke-width: 1; }
+    .wheel { fill: #080d18; stroke: #8e9ab5; stroke-width: 1.4; }
+    .wheel-rim { fill: #cbd5e1; }
+    .headlight { fill: #fff7c2; }
+    .flame-outer, .flame-inner { opacity: 0; transform-box: fill-box; transform-origin: right center; }
+    .car.moving .flame-outer { opacity: 1; animation: exhaust-outer .12s steps(2, end) infinite alternate; }
+    .car.moving .flame-inner { opacity: 1; animation: exhaust-inner .09s steps(2, end) infinite alternate; }
+    @keyframes exhaust-outer { from { transform: scaleX(.75) translateX(1px); opacity: .75; } to { transform: scaleX(1.25) translateX(-2px); opacity: 1; } }
+    @keyframes exhaust-inner { from { transform: scaleX(.8); opacity: .8; } to { transform: scaleX(1.2) translateX(-1px); opacity: 1; } }
+    .start-mark { position: absolute; left: 5%; top: 36px; bottom: 10px; border-left: 2px solid rgba(199,243,107,.5); z-index: 1; }
+    .finish-mark { position: absolute; right: 5%; top: 34px; bottom: 7px; width: 13px; opacity: .85; background: repeating-conic-gradient(#eef2ff 0% 25%, #59627d 0% 50%) 0 0 / 10px 10px; border: 1px solid rgba(255,255,255,.35); }
+    .track-bottom { display: flex; justify-content: space-between; color: #8290b0; font-size: 10px; padding: 5px 3px 0; }
+    .race-message { margin: 0 17px 17px; padding: 10px 12px; border-radius: 11px; color: #bdc8e5; font-size: 12px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.055); min-height: 40px; }
+    .typing-content { padding: 0 21px 21px; }
+    .target-label { color: var(--muted); text-transform: uppercase; letter-spacing: .13em; font-size: 10px; font-weight: 800; margin: 2px 0 8px; }
+    .target-word { background: rgba(199,243,107,.1); color: var(--lime); border: 1px solid rgba(199,243,107,.2); border-radius: 14px; min-height: 68px; display: grid; place-items: center; font-size: clamp(28px, 4vw, 38px); font-weight: 850; letter-spacing: .02em; overflow-wrap: anywhere; padding: 9px 15px; }
+    .passage { background: #11182b; border: 1px solid var(--line); padding: 15px 16px; border-radius: 12px; margin: 12px 0 15px; font-size: clamp(17px, 1.65vw, 20px); line-height: 2; color: #b3c0df; min-height: 90px; }
+    .word { border-radius: 5px; padding: 2px 3px; margin-right: 2px; }
+    .word.done { color: #7383a8; text-decoration: line-through; text-decoration-color: rgba(199,243,107,.45); }
+    .word.done.word-error { color: var(--red); text-decoration-color: rgba(255,124,136,.8); }
+    .word.current { color: #1b2413; background: var(--lime); font-weight: 800; }
+    .word.current.word-error { box-shadow: inset 0 -3px 0 var(--red); }
+    .confetti-layer { position: fixed; inset: 0; z-index: 9999; pointer-events: none; overflow: hidden; visibility: hidden; }
+    .confetti-layer.show { visibility: visible; }
+    .confetti-piece { position: absolute; top: 70vh; width: var(--piece-size, 9px); height: calc(var(--piece-size, 9px) * 1.55); border-radius: var(--piece-radius, 2px); opacity: 0; animation: confetti-burst var(--duration, 2.5s) cubic-bezier(.13,.58,.3,1) var(--delay, 0s) forwards; will-change: transform, opacity; }
+    .confetti-popper { position: absolute; bottom: 9vh; font-size: clamp(36px, 5vw, 58px); filter: drop-shadow(0 5px 9px rgba(0,0,0,.24)); animation: popper-launch .65s cubic-bezier(.2,.8,.2,1) both; }
+    .confetti-popper.left { left: 4vw; transform-origin: 30% 90%; }
+    .confetti-popper.right { right: 4vw; transform-origin: 70% 90%; }
+    @keyframes confetti-burst {
+      0% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(.45); }
+      12% { opacity: 1; transform: translate(var(--burst-x), var(--burst-y, -48vh)) rotate(170deg) scale(1); }
+      100% { opacity: 0; transform: translate(var(--drift-x), var(--fall-y, 45vh)) rotate(var(--spin, 650deg)) scale(.78); }
+    }
+    @keyframes popper-launch { 0% { opacity: 0; scale: .25; } 65% { opacity: 1; scale: 1.15; } 100% { opacity: 1; scale: 1; } }
+    .input-label { display: block; color: #dce4fa; font-size: 12px; font-weight: 700; margin-bottom: 7px; }
+    .input-row { display: flex; gap: 9px; }
+    .type-input { width: 100%; min-width: 0; background: #0f1526; border: 1px solid rgba(181,199,241,.25); color: white; border-radius: 12px; padding: 13px 14px; font-size: 16px; }
+    .type-input::placeholder { color: #657394; }
+    .type-input:disabled { opacity: .55; cursor: not-allowed; }
+    .btn { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 800; white-space: nowrap; transition: transform .12s, filter .12s; }
+    .btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--lime); color: #172116; }
+    .btn-secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .start-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .hint { color: var(--muted); font-size: 11px; margin: 11px 0 0; }
+    .feedback { min-height: 21px; margin-top: 8px; color: var(--muted); font-size: 12px; }
+    .feedback.good { color: var(--lime); }
+    .feedback.bad { color: var(--red); }
+    .side-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .chart-wrap { padding: 0 17px 14px; }
+    canvas { display: block; width: 100%; height: 196px; }
+    .chart-foot { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10px; padding: 0 4px; }
+    .legend-dot { display: inline-block; width: 7px; height: 7px; background: var(--lime); border-radius: 50%; margin-right: 5px; }
+    .howto { padding: 0 21px 20px; }
+    .steps { display: grid; gap: 13px; margin-top: 12px; }
+    .step { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+    .step-num { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: var(--panel-2); color: var(--lime); font-size: 12px; font-weight: 900; }
+    .step strong { display: block; font-size: 12px; margin: 1px 0 2px; }
+    .step p { color: var(--muted); font-size: 11px; margin: 0; }
+    .result-panel { margin-top: 18px; display: none; }
+    .result-panel.show { display: block; }
+    .result-body { padding: 0 21px 21px; }
+    .result-banner { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 16px; border: 1px solid rgba(199,243,107,.23); background: rgba(199,243,107,.07); border-radius: 14px; margin-bottom: 15px; }
+    .result-banner h3 { margin: 0; font-size: 18px; }
+    .result-banner p { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+    .result-emoji { font-size: 32px; }
+    .result-stats { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; }
+    .result-stat { background: #11182b; border: 1px solid var(--line); border-radius: 12px; padding: 13px; }
+    .result-stat span { display: block; color: var(--muted); font-size: 11px; }
+    .result-stat strong { display: block; font-size: 22px; margin-top: 3px; }
+    .result-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+    .footer { color: #6f7c9c; font-size: 11px; text-align: center; margin-top: 24px; }
+    [hidden] { display: none !important; }
+    .game-toolbar { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: 18px; align-items: center; margin-bottom: 18px; }
+    .game-heading { margin: 0; min-width: 0; }
+
+    .game-heading h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); letter-spacing: -.04em; }
+    .game-heading h2 span { color: var(--lime); }
+    .game-heading p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .game-mode { margin-bottom: 0; padding: 12px 15px; min-width: 0; }
+    .game-mode .mode-row { max-width: none; }
+    .game-mode .mode-note { margin-top: 5px; }
+    .live-results-heading { margin: 2px 0 10px; }
+    .live-results-heading .panel-desc { margin: 4px 0 0; }
+    .game-nav { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 0 0 18px; }
+    .game-nav span { color: var(--muted); font-size: 12px; text-align: right; }
+    .home-screen { position: relative; isolation: isolate; min-height: 64vh; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: linear-gradient(135deg, rgba(23,31,55,.98), rgba(17,24,43,.98)); padding: clamp(24px, 5vw, 64px); }
+    .home-glow { position: absolute; z-index: -1; width: 500px; height: 500px; right: -170px; top: -210px; border-radius: 50%; background: radial-gradient(circle, rgba(199,243,107,.16), transparent 70%); }
+    .home-content { width: min(720px, 100%); margin: 0 auto; }
+    .home-content h2, .page-card h2 { margin: 0; font-size: clamp(38px, 7vw, 68px); letter-spacing: -.065em; line-height: 1.02; }
+    .home-content h2 span { display: block; color: var(--lime); }
+    .home-copy { max-width: 650px; margin: 16px 0 0; color: var(--muted); font-size: 15px; }
+    .home-menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 30px; }
+    .menu-tile { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 20px; border-radius: 18px; border: 1px solid var(--line); background: rgba(32,42,71,.72); color: var(--text); text-align: left; transition: transform .14s ease, border-color .14s ease, background .14s ease; }
+    .menu-tile:hover { transform: translateY(-3px); border-color: rgba(199,243,107,.45); background: rgba(39,51,82,.92); }
+    .menu-tile-primary { background: var(--lime); color: #172116; border-color: transparent; }
+    .menu-tile-primary:hover { background: #d5ff7f; }
+    .menu-icon { display: grid; place-items: center; width: 46px; height: 46px; flex: 0 0 auto; border-radius: 13px; background: rgba(12,18,35,.14); font-size: 23px; }
+    .menu-tile:not(.menu-tile-primary) .menu-icon { background: rgba(199,243,107,.1); }
+    .menu-text { display: grid; gap: 4px; min-width: 0; flex: 1; }
+    .menu-text strong { font-size: 16px; }
+    .menu-text small { font-size: 11px; line-height: 1.45; opacity: .78; }
+    .menu-arrow { font-size: 24px; font-weight: 800; }
+    .home-note { margin: 22px 0 0; font-size: 11px; color: var(--muted); }
+    .howto-screen { min-height: 55vh; }
+    .page-card { max-width: 850px; margin: 0 auto; padding: clamp(22px, 4vw, 42px); border: 1px solid var(--line); border-radius: 24px; background: rgba(23,31,55,.92); }
+    .page-card h2 { font-size: clamp(34px, 5vw, 48px); }
+    .howto-menu-steps { margin: 25px 0 26px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; align-items: start; }
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .game-toolbar { grid-template-columns: 1fr; gap: 10px; align-items: stretch; }
+      .mode-card { max-width: none; }
+      .layout { grid-template-columns: 1fr; }
+      .side-stack { grid-template-columns: minmax(0, 1fr); align-items: start; }
+      .home-menu { grid-template-columns: 1fr; }
+      .home-screen { min-height: 58vh; }
+    }
+    @media (max-width: 900px) {
+      .result-stats { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 20px, 1180px); padding-top: 15px; }
+      .topbar { align-items: flex-start; margin-bottom: 16px; }
+      .class-pill { white-space: normal; text-align: right; max-width: 170px; font-size: 10px; }
+      .brand h1 { font-size: 18px; }
+      .brand-mark { width: 40px; height: 40px; }
+      .game-nav { align-items: flex-start; flex-direction: row; }
+      .game-mode { padding: 10px; }
+      .game-toolbar { gap: 8px; margin-bottom: 14px; }
+      .game-heading { margin-bottom: 8px; }
+      .game-nav span { text-align: left; }
+      .menu-tile { padding: 16px; }
+      .home-screen { padding: 22px 17px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .metric { padding: 13px; }
+      .side-stack { grid-template-columns: 1fr; }
+      .panel-head { padding: 16px 15px 12px; }
+      .track-wrap { padding-left: 10px; padding-right: 10px; }
+      .track { height: 190px; }
+      .lane.lane-player { top: 39px; }
+      .lane.lane-rival { top: 115px; }
+      .race-message { margin-left: 10px; margin-right: 10px; }
+      .typing-content { padding-left: 15px; padding-right: 15px; }
+      .input-row { flex-direction: column; }
+      .input-row .btn { width: 100%; }
+      .result-body { padding-left: 14px; padding-right: 14px; }
+      .result-stats { grid-template-columns: 1fr; }
+      .result-banner { align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+      .confetti-layer.show .confetti-piece { display: none; }
+      .confetti-layer.show .confetti-popper { opacity: 1; }
+    }
+  
+
+    /* RESPONSIVE LAYOUT v11 — phones, tablets, and resizable desktop windows */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    body { overflow-x: hidden; }
+    .wrap, #gameScreen, .layout, .panel, .panel-head, .typing-content,
+    .chart-wrap, .metrics, .result-body, .game-toolbar, .game-heading,
+    .mode-card, .home-content { min-width: 0; }
+    .panel-head > :first-child { flex: 1 1 auto; min-width: 0; }
+    .panel-desc, .mode-note, .hint, .feedback, .metric-sub, .result-banner p,
+    .result-stat span, .class-pill { overflow-wrap: anywhere; }
+    .btn, select { min-height: 44px; }
+    .type-input { min-height: 48px; font-size: 16px; }
+    .btn-refresh { min-width: 44px; min-height: 44px; }
+    .car {
+      width: clamp(48px, 6.2vw, 72px);
+      height: auto;
+      top: 12px;
+      transform: none;
+    }
+    .car-svg { width: 100%; height: auto; aspect-ratio: 132 / 56; }
+    .panel-head .status-chip { max-width: 42%; white-space: normal; text-align: center; }
+    .start-row > .btn { flex: 1 1 160px; }
+    .result-stat, .metric { min-width: 0; }
+    .passage { overflow-wrap: anywhere; }
+    canvas { max-width: 100%; }
+
+    @media (max-width: 900px) {
+      .game-toolbar { grid-template-columns: minmax(0, 1fr); }
+      .track { height: clamp(178px, 25vw, 198px); }
+      .metrics { gap: 10px; }
+      .result-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .wrap { width: calc(100% - 16px); padding-top: 10px; padding-bottom: 20px; }
+      .topbar { gap: 8px; align-items: center; margin-bottom: 13px; }
+      .brand { gap: 8px; }
+      .brand-mark { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 12px; font-size: 21px; }
+      .brand h1 { font-size: 17px; line-height: 1.1; }
+      .brand p { font-size: 8px; line-height: 1.3; letter-spacing: .08em; }
+      .class-pill { max-width: 42%; padding: 7px 8px; font-size: 9px; line-height: 1.3; white-space: normal; }
+      .game-nav { flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+      .game-nav .btn { min-height: 42px; padding: 8px 10px; font-size: 12px; }
+      .game-nav span { font-size: 10px; text-align: right; flex: 1 1 120px; }
+      .game-toolbar { gap: 9px; margin-bottom: 12px; }
+      .game-heading { margin-bottom: 0; }
+      .game-heading h2 { font-size: clamp(22px, 6.2vw, 30px); line-height: 1.12; overflow-wrap: anywhere; }
+      .game-heading p { margin-top: 4px; font-size: 11px; line-height: 1.4; }
+      .game-mode { padding: 11px; border-radius: 14px; }
+      .game-mode label { font-size: 11px; }
+      .game-mode .mode-row select { min-height: 46px; padding: 10px; font-size: 14px; }
+      .game-mode .mode-note { font-size: 10px; line-height: 1.4; }
+      .layout { gap: 12px; }
+      .panel { border-radius: 15px; }
+      .panel-head { padding: 13px 12px 10px; gap: 8px; }
+      .panel-title { font-size: 15px; line-height: 1.25; }
+      .panel-desc { font-size: 10px; line-height: 1.4; }
+      .panel-head .status-chip { max-width: 34%; padding: 5px 6px; font-size: 8px; letter-spacing: .04em; line-height: 1.25; }
+      .track-wrap { padding: 2px 9px 12px; }
+      .track { width: 100%; height: clamp(176px, 53vw, 190px); border-radius: 12px; }
+      .track-label { top: 8px; left: 9px; font-size: 8px; letter-spacing: .09em; }
+      .lane.lane-player { top: 38px; }
+      .lane.lane-rival { top: calc(50% + 18px); }
+      .lane-name { left: 9px; font-size: 8px; letter-spacing: .05em; }
+      .car { width: clamp(48px, 14vw, 60px); top: 12px; }
+      .finish-mark { width: 10px; }
+      .track-bottom { font-size: 9px; }
+      .race-message { margin: 0 9px 12px; padding: 9px 10px; min-height: 0; font-size: 10px; line-height: 1.45; }
+      .typing-head-actions { gap: 6px; align-items: center; }
+      .btn-refresh { min-width: 42px; width: 42px; min-height: 42px; height: 42px; padding: 8px; }
+      .typing-content { padding: 0 12px 14px; }
+      .target-label { margin: 1px 0 7px; font-size: 9px; }
+      .target-word { min-height: 54px; padding: 8px 10px; border-radius: 11px; font-size: clamp(25px, 7.5vw, 34px); overflow-wrap: anywhere; }
+      .passage { min-height: 88px; padding: 11px 10px; margin: 10px 0 13px; border-radius: 10px; font-size: clamp(17px, 4.6vw, 20px); line-height: 1.85; overflow-wrap: anywhere; }
+      .word { padding: 2px; margin-right: 1px; }
+      .input-label { margin-bottom: 6px; font-size: 11px; }
+      .input-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+      .type-input { width: 100%; min-height: 48px; padding: 12px; font-size: 16px; }
+      .input-row .btn { width: 100%; min-height: 46px; }
+      .feedback { min-height: 0; font-size: 11px; line-height: 1.45; }
+      .hint { font-size: 10px; line-height: 1.5; }
+      .start-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+      .start-row .btn { width: 100%; min-height: 46px; }
+      .chart-wrap { padding: 0 10px 12px; }
+      canvas { height: clamp(155px, 47vw, 188px); }
+      .chart-foot { flex-wrap: wrap; gap: 5px 10px; padding: 0 1px; font-size: 9px; }
+      .live-results-heading { margin: 13px 0 8px; }
+      .live-results-heading .panel-title { font-size: 16px; }
+      .live-results-heading .panel-desc { font-size: 10px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+      .metric { padding: 11px 10px; border-radius: 12px; }
+      .metric-label { gap: 4px; font-size: 10px; line-height: 1.35; }
+      .metric-value { margin-top: 5px; font-size: clamp(21px, 6vw, 28px); overflow-wrap: anywhere; }
+      .metric-sub { font-size: 9px; line-height: 1.35; }
+      .result-panel { margin-top: 12px; }
+      .result-body { padding: 0 12px 14px; }
+      .result-banner { padding: 12px; margin-bottom: 12px; gap: 8px; }
+      .result-banner h3 { font-size: 16px; }
+      .result-banner p { font-size: 10px; line-height: 1.45; }
+      .result-emoji { flex: 0 0 auto; font-size: 26px; }
+      .result-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .result-stat { padding: 10px; border-radius: 10px; }
+      .result-stat span { font-size: 10px; line-height: 1.35; }
+      .result-stat strong { font-size: 19px; overflow-wrap: anywhere; }
+      .result-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+      .result-actions .btn { width: 100%; min-height: 46px; }
+      .footer { margin-top: 17px; font-size: 9px; line-height: 1.45; }
+      .home-screen { min-height: 0; padding: 24px 15px; border-radius: 18px; }
+      .home-content h2 { font-size: clamp(36px, 10vw, 52px); }
+      .home-copy { margin-top: 12px; font-size: 13px; line-height: 1.5; }
+      .home-menu { gap: 9px; margin-top: 20px; }
+      .menu-tile { padding: 14px 12px; gap: 10px; border-radius: 13px; }
+      .menu-icon { width: 40px; height: 40px; font-size: 20px; }
+      .menu-text strong { font-size: 14px; }
+      .menu-text small { font-size: 10px; }
+      .home-note { margin-top: 15px; line-height: 1.45; }
+      .page-card { padding: 20px 14px; border-radius: 16px; }
+      .page-card h2 { font-size: clamp(30px, 8vw, 42px); }
+      .step { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; }
+      .step p { font-size: 11px; line-height: 1.5; }
+      .step strong { line-height: 1.4; }
+    }
+    @media (max-width: 380px) {
+      .wrap { width: calc(100% - 12px); }
+      .class-pill { max-width: 41%; padding: 6px 7px; font-size: 8px; }
+      .brand { gap: 6px; }
+      .brand-mark { width: 34px; height: 34px; font-size: 19px; }
+      .brand h1 { font-size: 15px; }
+      .brand p { font-size: 7px; letter-spacing: .06em; }
+      .game-nav { align-items: flex-start; }
+      .game-nav span { flex: 1 1 100%; text-align: left; }
+      .panel-head { gap: 6px; }
+      .panel-head .status-chip { max-width: 31%; font-size: 7px; padding: 4px 5px; }
+      .track { height: 174px; }
+      .lane.lane-player { top: 36px; }
+      .lane.lane-rival { top: calc(50% + 15px); }
+      .car { width: 48px; top: 12px; }
+      .target-word { font-size: 25px; }
+      .passage { font-size: 17px; padding: 10px 9px; line-height: 1.8; }
+      .result-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (hover: none) and (pointer: coarse) {
+      button, select, .type-input { touch-action: manipulation; }
+      .btn { min-height: 44px; }
+      .menu-tile { min-height: 68px; }
+      .btn:hover, .menu-tile:hover { transform: none; filter: none; }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">⌨</div>
+        <div><h1>DragType</h1><p>Typing Race</p></div>
+      </div>
+      <div class="class-pill">Kreator · Hanif Syahri Al Ghifari</div>
+    </header>
+
+    <section class="home-screen" id="homeScreen" aria-labelledby="homeTitle">
+      <div class="home-glow" aria-hidden="true"></div>
+      <div class="home-content">
+        <p class="eyebrow">MEDIA LATIHAN INFORMATIKA · KELAS VII</p>
+        <h2 id="homeTitle">DragType <span>Typing Race</span></h2>
+        <p class="home-copy">Latih keterampilan mengetik lewat balapan mobil. Ketik dengan tepat, pacu mobilmu, dan lihat perkembangan kemampuanmu.</p>
+        <div class="home-menu" aria-label="Menu utama">
+          <button class="menu-tile menu-tile-primary" id="menuStartBtn" type="button">
+            <span class="menu-icon" aria-hidden="true">🏁</span>
+            <span class="menu-text"><strong>Mulai Balapan</strong><small>Masuk ke arena dan mulai latihan mengetik.</small></span>
+            <span class="menu-arrow" aria-hidden="true">→</span>
+          </button>
+          <button class="menu-tile" id="menuHowToBtn" type="button">
+            <span class="menu-icon" aria-hidden="true">⌨️</span>
+            <span class="menu-text"><strong>Cara Bermain</strong><small>Pelajari aturan dan cara mendapatkan hasil terbaik.</small></span>
+            <span class="menu-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+        <p class="home-note">Tidak perlu terburu-buru. Utamakan ketepatan, lalu tingkatkan kecepatan secara bertahap.</p>
+      </div>
+    </section>
+
+    <section class="howto-screen" id="howToScreen" hidden aria-labelledby="howToTitle">
+      <div class="page-card">
+        <p class="eyebrow">PANDUAN PEMAIN</p>
+        <h2 id="howToTitle">Cara Bermain</h2>
+        <p class="home-copy">Ikuti langkah-langkah berikut sebelum mulai balapan.</p>
+        <div class="steps howto-menu-steps">
+          <div class="step"><div class="step-num">01</div><div><strong>Pilih tingkat latihan</strong><p>Pilih Pemula, Menengah, atau Tantangan. Mulailah dari tingkat yang paling nyaman.</p></div></div>
+          <div class="step"><div class="step-num">02</div><div><strong>Ketik kata yang disorot</strong><p>Ketik kata target persis seperti yang terlihat. Semua teks menggunakan huruf kecil tanpa tanda baca. Tekan Spasi atau Enter untuk mengirim kata, dan gunakan Backspace untuk memperbaiki.</p></div></div>
+          <div class="step"><div class="step-num">03</div><div><strong>Pacu mobil menuju finis</strong><p>Setiap kata yang benar akan mendorong mobilmu maju. Kalimat akan berubah pada sesi latihan berikutnya.</p></div></div>
+          <div class="step"><div class="step-num">04</div><div><strong>Periksa hasil latihan</strong><p>Lihat KPM, akurasi, durasi, dan grafik kecepatan untuk mengetahui perkembanganmu.</p></div></div>
+        </div>
+        <button class="btn btn-secondary" id="backHomeBtn" type="button">← Kembali ke menu utama</button>
+      </div>
+    </section>
+
+    <div id="gameScreen" hidden>
+      <div class="game-nav"><button class="btn btn-secondary" id="returnHomeBtn" type="button">← Menu utama</button><span>Latihan keyboard jadi seru</span></div>
+    <div class="game-toolbar">
+    <div class="game-heading">
+      <h2 id="page-title">Siap, ketik, <span>Gas Pol!</span></h2>
+      <p>Fokus pada ketepatan, kemudian tingkatkan kecepatan.</p>
+    </div>
+    <div class="mode-card game-mode">
+      <label for="levelSelect">Pilih tingkat latihan sebelum mulai mengetik</label>
+      <div class="mode-row">
+        <select id="levelSelect" aria-describedby="levelNote">
+          <option value="pemula">Pemula — Adek-adekan</option>
+          <option value="menengah">Menengah — Manusia Biasa</option>
+          <option value="tantangan">Tantangan — Sepuh</option>
+        </select>
+      </div>
+      <p class="mode-note" id="levelNote">Pilih tingkat yang sesuai. Pilihan dapat diubah sebelum karakter pertama diketik.</p>
+    </div>
+
+    </div>
+    <section class="layout" aria-label="Tahapan latihan DragType">
+      <section class="panel race-panel" aria-labelledby="racePanelTitle">
+        <div class="panel-head">
+          <div><h2 class="panel-title" id="racePanelTitle">Arena Drag Race</h2><p class="panel-desc" id="raceMessage" aria-live="polite">Siap! Waktu mulai dihitung saat kamu menekan karakter pertama. Setiap kata benar membawa mobilmu menuju finis.</p></div>
+          <span class="status-chip" id="raceStatus">Siap di garis start</span>
+        </div>
+        <div class="track-wrap">
+          <div class="track" aria-label="Lintasan balapan dua mobil">
+            <div class="track-sky"></div>
+            <div class="track-label">DRAG STRIP · 402 M</div>
+            <div class="start-mark" aria-hidden="true"></div>
+            <div class="finish-mark" aria-hidden="true"></div>
+            <div class="lane lane-player">
+              <div class="lane-name">Kamu</div><div class="lane-line"></div>
+              <div class="car player" id="playerCar" aria-label="Mobil pemain menghadap garis finis di kanan">
+                <svg class="car-svg" viewBox="0 0 132 56" role="img" aria-label="Mobil balap menghadap ke kanan, menuju garis finis">
+                  <g class="exhaust-art">
+                    <path class="flame-outer" d="M20 30 C12 23 7 25 0 26 C5 29 1 33 12 34 L20 34 Z" fill="#ff6b35"/>
+                    <path class="flame-inner" d="M20 30 C14 27 9 29 5 29 C10 31 12 32 20 32 Z" fill="#ffe66d"/>
+                  </g>
+                  <path d="M14 23 L26 23 L26 36 L14 36 Z" fill="#b9c4dc" stroke="#68748f" stroke-width="1.3"/>
+                  <circle class="wheel" cx="39" cy="38" r="8.5"/><circle class="wheel" cx="91" cy="38" r="8.5"/>
+                  <circle class="wheel-rim" cx="39" cy="38" r="3.4"/><circle class="wheel-rim" cx="91" cy="38" r="3.4"/>
+                  <path class="car-body-player" d="M16 35 L23 28 L42 27 L53 18 Q62 12 79 15 L94 23 L109 27 L121 29 L130 35 L121 41 L22 41 L16 37 Z"/>
+                  <path class="car-window" d="M55 18 Q64 14 78 16 L85 24 L52 24 Z"/><path class="car-window" d="M88 18 L98 25 L86 24 Z"/>
+                  <path d="M106 28 L121 29 L129 34 L120 36 L106 33 Z" fill="#172116" opacity=".7"/>
+                  <path class="headlight" d="M122 31 L130 34 L122 36 Z"/>
+                  <path d="M111 39 L129 40 L123 43 L111 42 Z" fill="#d9e2f5"/>
+                  <path d="M23 29 L37 28" stroke="#53652c" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M115 23 L131 35 L115 46 L120 35 Z" fill="#f7ffe0" stroke="#53652c" stroke-width=".8"/>
+                </svg>
+              </div>
+            </div>
+            <div class="lane lane-rival">
+              <div class="lane-name" id="rivalName">Lawan · 8 KPM</div><div class="lane-line"></div>
+              <div class="car rival" id="rivalCar" aria-label="Mobil lawan menghadap garis finis di kanan">
+                <svg class="car-svg" viewBox="0 0 132 56" role="img" aria-label="Mobil lawan menghadap ke kanan, menuju garis finis">
+                  <path d="M14 23 L26 23 L26 36 L14 36 Z" fill="#b9c4dc" stroke="#68748f" stroke-width="1.3"/>
+                  <circle class="wheel" cx="39" cy="38" r="8.5"/><circle class="wheel" cx="91" cy="38" r="8.5"/>
+                  <circle class="wheel-rim" cx="39" cy="38" r="3.4"/><circle class="wheel-rim" cx="91" cy="38" r="3.4"/>
+                  <path class="car-body-rival" d="M16 35 L23 28 L42 27 L53 18 Q62 12 79 15 L94 23 L109 27 L121 29 L130 35 L121 41 L22 41 L16 37 Z"/>
+                  <path class="car-window" d="M55 18 Q64 14 78 16 L85 24 L52 24 Z"/><path class="car-window" d="M88 18 L98 25 L86 24 Z"/>
+                  <path d="M106 28 L121 29 L129 34 L120 36 L106 33 Z" fill="#172116" opacity=".7"/>
+                  <path class="headlight" d="M122 31 L130 34 L122 36 Z"/>
+                  <path d="M111 39 L129 40 L123 43 L111 42 Z" fill="#d9e2f5"/>
+                  <path d="M23 29 L37 28" stroke="#294b85" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M115 23 L131 35 L115 46 L120 35 Z" fill="#eaf1ff" stroke="#294b85" stroke-width=".8"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="track-bottom"><span>START</span><span>FINISH</span></div>
+        </div>
+      </section>
+
+      <section class="panel typing-panel" aria-labelledby="typingPanelTitle">
+        <div class="panel-head">
+          <div><h2 class="panel-title" id="typingPanelTitle">Tes Mengetik</h2><p class="panel-desc">Ketik kata yang disorot dengan benar untuk menjalankan mobilmu.</p></div>
+          <div class="typing-head-actions">
+            <button class="btn btn-secondary btn-refresh" id="refreshPassageBtn" type="button" title="Ganti kalimat latihan" aria-label="Ganti kalimat latihan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 17.5 6.5L20 12M4 12l2.5 5.5A7 7 0 0 0 18.4 15"/></svg>
+              <span>Ganti kalimat</span>
+            </button>
+            <span class="status-chip">Latihan</span>
+          </div>
+        </div>
+        <div class="typing-content">
+          <p class="target-label">Ketik kata berikut</p>
+          <div class="target-word" id="targetWord">saya</div>
+          <div class="passage" id="passage" aria-label="Teks latihan"></div>
+          <label class="input-label" for="typingInput">Ketik kata pada kotak berikut</label>
+          <div class="input-row">
+            <input class="type-input" id="typingInput" type="text" placeholder="Tekan Mulai Balapan dahulu…" autocomplete="off" autocapitalize="off" autocorrect="off" inputmode="text" enterkeyhint="done" spellcheck="false" disabled aria-describedby="typingHint feedback">
+            <button class="btn btn-primary" id="submitWordBtn" disabled>Masukkan ↵</button>
+          </div>
+          <div class="feedback" id="feedback" aria-live="polite">Tekan tombol mulai untuk memulai latihan.</div>
+          <p class="hint" id="typingHint">Petunjuk: ketik kata yang disorot, lalu tekan Spasi atau Enter. Gunakan Backspace untuk memperbaiki; kata yang pernah salah tetap tercatat sebagai kata salah.</p>
+          <div class="start-row">
+            <button class="btn btn-primary" id="startBtn">Mulai balapan →</button>
+            <button class="btn btn-secondary" id="playAgainBtn" hidden>Balapan lagi ↻</button>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="panel chart-panel" aria-labelledby="chartPanelTitle">
+        <div class="panel-head"><div><h2 class="panel-title" id="chartPanelTitle">Grafik Tes Mengetik</h2><p class="panel-desc">Pantau perubahan kecepatan mengetik selama sesi berlangsung.</p></div><span class="status-chip">Live</span></div>
+        <div class="chart-wrap">
+          <canvas id="speedChart" role="img" aria-label="Grafik perubahan kata per menit selama latihan"></canvas>
+          <div class="chart-foot"><span><i class="legend-dot"></i>Kata per menit standar</span><span id="chartTimeLabel">0 detik</span></div>
+        </div>
+      </section>
+    </section>
+
+    <div class="live-results-heading">
+      <h2 class="panel-title">Hasil Tes Saat Ini</h2>
+      <p class="panel-desc">Statistik akan diperbarui selama kamu mengetik.</p>
+    </div>
+    <section class="metrics" aria-label="Statistik latihan saat ini">
+      <div class="metric"><div class="metric-label">⚡ Kecepatan net</div><div class="metric-value"><span id="kpmValue">0</span> <small style="font-size:12px;color:var(--muted);font-weight:700">KPM</small></div><div class="metric-sub">Karakter benar ÷ 5 ÷ menit</div></div>
+      <div class="metric"><div class="metric-label">◎ Akurasi</div><div class="metric-value"><span id="accuracyValue">100</span><small style="font-size:15px">%</small></div><div class="metric-sub">Ketepatan tombol</div></div>
+      <div class="metric"><div class="metric-label">✓ Kata benar</div><div class="metric-value" id="wordsValue">0</div><div class="metric-sub" id="wordCountSub">dari 30 kata</div></div>
+      <div class="metric"><div class="metric-label">✗ Kata salah</div><div class="metric-value" id="wrongWordsValue">0</div><div class="metric-sub">pernah mengandung kesalahan</div></div>
+      <div class="metric"><div class="metric-label">◷ Waktu</div><div class="metric-value" id="timeValue">00:00</div><div class="metric-sub">Durasi latihan</div></div>
+    </section>
+
+    <section class="panel result-panel" id="resultPanel" aria-live="polite">
+      <div class="panel-head"><div><h2 class="panel-title">Hasil balapan</h2><p class="panel-desc">Gunakan hasil ini untuk menentukan latihan berikutnya.</p></div><span class="status-chip">Sesi selesai</span></div>
+      <div class="result-body">
+        <div class="result-banner"><div><h3 id="resultTitle">Balapan selesai!</h3><p id="resultDescription">Kamu sudah menyelesaikan latihan mengetik.</p></div><div class="result-emoji" id="resultEmoji" aria-hidden="true">🏁</div></div>
+        <div class="result-stats">
+          <div class="result-stat"><span>Kecepatan mengetik (net)</span><strong id="finalKpm">0 KPM</strong></div>
+          <div class="result-stat"><span>Akurasi</span><strong id="finalAccuracy">100%</strong></div>
+          <div class="result-stat"><span>Durasi latihan</span><strong id="finalTime">00:00</strong></div>
+          <div class="result-stat"><span>Kata benar tanpa kesalahan</span><strong id="finalWords">0</strong></div>
+          <div class="result-stat"><span>Kata salah</span><strong id="finalWrongWords">0</strong></div>
+        </div>
+        <div class="result-actions"><button class="btn btn-primary" id="resultAgainBtn">Coba lagi ↻</button><button class="btn btn-secondary" id="downloadResultBtn">Unduh hasil (.csv)</button></div>
+      </div>
+    </section>
+
+    <footer class="footer">DragType — Typing Race · Media latihan keterampilan keyboard untuk pembelajaran Informatika kelas VII.</footer>
+    </div>
+  </main>
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const LEVELS = {
+        pemula: {
+          label: 'Pemula', rivalKpm: 30,
+          passages: [
+            'pagi ini saya bangun lebih awal lalu membantu ibu menyiapkan sarapan untuk seluruh keluarga di dapur',
+            'sebelum berangkat sekolah saya memakai seragam merapikan rambut dan memasukkan semua buku ke dalam tas',
+            'sore hari kami bermain bola bersama teman di lapangan dekat rumah sampai matahari mulai terbenam',
+            'ibu membeli sayur buah telur dan ikan segar di pasar untuk dimasak saat makan malam',
+            'setiap malam saya membaca buku cerita sebentar sebelum tidur agar pikiran terasa tenang dan nyaman',
+            'ayah menyiram tanaman di halaman rumah setiap pagi supaya daun tetap segar dan bunga cepat tumbuh',
+            'adik menata mainan ke dalam kotak setelah selesai bermain agar ruang tengah tetap rapi dan bersih',
+            'kami membawa bekal dari rumah lalu makan bersama di bawah pohon saat waktu istirahat tiba',
+            'sepulang sekolah saya membantu nenek menyapu halaman dan mengumpulkan daun kering ke dalam keranjang besar',
+            'hujan turun sejak pagi sehingga saya membawa payung dan memakai sandal saat pergi ke warung',
+          ]
+        },
+        menengah: {
+          label: 'Menengah', rivalKpm: 50,
+          passages: [
+            'setiap sabtu pagi keluarga kami membersihkan rumah bersama sama lalu menyiapkan sarapan sebelum pergi berkunjung ke rumah nenek di desa sambil membawa buah dan roti kesukaannya',
+            'ketika bel sekolah berbunyi kami merapikan buku di meja lalu berjalan tertib menuju halaman untuk mengikuti kegiatan pagi bersama guru dan teman dari kelas lain',
+            'sepulang sekolah rina mengganti pakaian mencuci tangan dan membantu ibu menyiapkan makan siang sebelum mulai mengerjakan pekerjaan rumah di meja dekat jendela sebelum ayah pulang bekerja',
+            'pada hari minggu ayah mengajak kami bersepeda mengelilingi kampung sambil menyapa tetangga yang sedang membersihkan halaman rumah mereka dan menyiram bunga di depan pagar pada pagi hari',
+            'saat memasak bersama kakak mencuci sayuran saya memotong buah dan ibu menyiapkan bumbu agar makan malam segera siap untuk dinikmati seluruh keluarga di meja makan',
+            'kami menyisihkan sebagian uang jajan setiap hari supaya dapat membeli hadiah sederhana untuk ulang tahun sahabat di kelas dan membungkusnya dengan kertas warna biru dengan pita kecil',
+            'sebelum tidur saya memeriksa jadwal pelajaran menyiapkan seragam dan memasukkan alat tulis agar tidak ada yang tertinggal besok pagi saat berangkat ke sekolah tanpa terburu buru',
+            'ketika melihat sampah di taman kami mengumpulkannya lalu membuang ke tempat yang sesuai agar lingkungan tetap bersih dan nyaman untuk semua orang yang berkunjung setiap akhir pekan',
+            'nenek bercerita tentang masa kecilnya sambil menunjukkan foto lama yang tersimpan rapi di dalam kotak kayu dekat lemari ruang tengah rumahnya yang dibuat saat mereka masih muda',
+            'setelah hujan reda anak anak keluar rumah untuk melihat pelangi sambil berjalan pelan agar tidak terpeleset di jalan yang basah dekat lapangan bersama adiknya yang juga ingin bermain di luar',
+          ]
+        },
+        tantangan: {
+          label: 'Tantangan', rivalKpm: 65,
+          passages: [
+            'pada hari libur keluarga kami berangkat pagi menuju rumah kakek di desa dan membawa buah roti serta beberapa buku cerita untuk dibaca bersama setelah makan siang sambil mendengarkan kisah masa kecil beliau yang menyenangkan setelah tiba kami membantu nenek menata makanan di meja lalu menikmati waktu bersama sampai sore',
+            'setiap sore setelah mengerjakan tugas sekolah saya membantu ibu menyapu lantai menyiram tanaman dan menata sandal di depan pintu agar rumah selalu terasa bersih dan nyaman bagi semua anggota keluarga sebelum malam tiba setelah selesai saya memeriksa kembali setiap sudut agar tidak ada barang yang berantakan atau tertinggal',
+            'ketika guru memberi tugas kelompok kami membagi pekerjaan secara adil lalu saling membantu mencari bahan bacaan menulis jawaban dan memeriksa kembali hasil kerja sebelum dikumpulkan pada hari berikutnya supaya tidak ada bagian yang terlewat kami juga memastikan setiap anggota memahami tugasnya dan meminta bantuan jika menemukan kesulitan saat bekerja bersama',
+            'pagi itu hujan turun deras sehingga kami menunggu di teras rumah sambil membaca buku dan berbincang tentang rencana berkunjung ke perpustakaan setelah cuaca kembali cerah agar perjalanan terasa aman dan menyenangkan bagi semua kami juga menyiapkan jas hujan dan memberi kabar kepada ibu agar beliau tidak khawatir menunggu di rumah',
+            'ayah mengajak kami pergi ke pasar tradisional untuk membeli beras telur sayuran dan ikan segar sambil mengajari cara memilih barang yang baik serta menghitung uang belanja dengan teliti agar pengeluaran keluarga tetap sesuai rencana sebelum pulang kami mencatat jumlah belanja lalu menyimpan uang kembali dengan aman di dompet ayah',
+            'saat bermain di lapangan kami melihat seorang teman terjatuh lalu segera membantunya berdiri membersihkan lututnya dan mengantarnya pulang agar ia dapat beristirahat dengan tenang sebelum kami memberi tahu keluarganya tentang kejadian tersebut kami juga memastikan ia dapat berjalan dengan baik lalu menunggu sebentar sampai keluarganya membuka pintu rumah',
+            'sebelum berangkat bertamasya kami memeriksa isi tas membawa air minum menyiapkan bekal sederhana dan memastikan semua anggota keluarga memakai pakaian yang nyaman untuk perjalanan agar tidak kesulitan saat berjalan jauh bersama sama kami juga membawa topi dan memberi tahu semua orang tentang tempat berkumpul jika ada yang berjalan terlalu jauh',
+            'pada malam minggu kami berkumpul di ruang tengah untuk membaca cerita bergantian mendengarkan pendapat setiap orang dan memilih kegiatan bersama yang disukai oleh seluruh keluarga supaya semua merasa senang dan ikut menentukan rencana akhir pekan kami kemudian menyiapkan teh hangat dan kudapan agar obrolan tetap menyenangkan sampai waktu tidur tiba',
+            'ketika mendapat nilai yang belum memuaskan saya membaca kembali catatan pelajaran bertanya kepada guru dan berlatih soal di rumah agar lebih memahami bagian yang masih sulit sebelum mengikuti ulangan berikutnya dengan rasa percaya diri saya juga membuat catatan singkat tentang jawaban yang benar agar mudah mengingatnya ketika belajar kembali nanti',
+            'warga kampung bekerja bersama membersihkan selokan menyapu jalan dan menanam bunga di tepi pagar sehingga lingkungan terlihat lebih rapi serta nyaman untuk anak anak bermain setiap sore dan warga dapat berjalan dengan aman saat pagi hari kami berharap taman kecil itu menjadi tempat yang nyaman untuk berbincang dan beristirahat bersama',
+          ]
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const el = {
+        level: $('levelSelect'), kpm: $('kpmValue'), accuracy: $('accuracyValue'), words: $('wordsValue'), wrongWords: $('wrongWordsValue'), wordSub: $('wordCountSub'), time: $('timeValue'), confetti: $('confettiLayer'),
+        playerCar: $('playerCar'), rivalCar: $('rivalCar'), rivalName: $('rivalName'), raceStatus: $('raceStatus'), raceMessage: $('raceMessage'),
+        target: $('targetWord'), passage: $('passage'), input: $('typingInput'), submit: $('submitWordBtn'), feedback: $('feedback'),
+        start: $('startBtn'), again: $('playAgainBtn'), refresh: $('refreshPassageBtn'), chart: $('speedChart'), chartTime: $('chartTimeLabel'),
+        resultPanel: $('resultPanel'), resultTitle: $('resultTitle'), resultDescription: $('resultDescription'), resultEmoji: $('resultEmoji'),
+        finalKpm: $('finalKpm'), finalAccuracy: $('finalAccuracy'), finalTime: $('finalTime'), finalWords: $('finalWords'), finalWrongWords: $('finalWrongWords'), resultAgain: $('resultAgainBtn'), download: $('downloadResultBtn')
+      };
+
+      let words = [];
+      let state = {};
+      let timerId = null;
+      let latestResult = null;
+      let lastPassageByLevel = {};
+      let flameTimeout = null;
+      let confettiCleanupTimer = null;
+
+      function newState() {
+        return {
+          active: false, ended: false, started: false, startTime: 0, elapsed: 0, wordIndex: 0,
+          keyPresses: 0, correctKeyPresses: 0, correctWords: 0, wrongWords: 0, correctCharacters: 0,
+          currentWordHadMistake: false, wrongWordIndexes: new Set(),
+          graphPoints: [{ t: 0, kpm: 0 }], lastSample: 0, rivalFinished: false
+        };
+      }
+
+      function currentLevel() { return LEVELS[el.level.value] || LEVELS.pemula; }
+      function choosePassage(levelKey = el.level.value) {
+        const level = LEVELS[levelKey] || LEVELS.pemula;
+        const previous = lastPassageByLevel[levelKey];
+        let choices = level.passages.filter(text => text !== previous);
+        if (!choices.length) choices = level.passages;
+        const selected = choices[Math.floor(Math.random() * choices.length)];
+        lastPassageByLevel[levelKey] = selected;
+        return selected;
+      }
+      function accuracyValue() {
+        return state.keyPresses ? Math.round((state.correctKeyPresses / state.keyPresses) * 100) : 100;
+      }
+      function markCurrentWordWrong() {
+        if (!state.active || state.wordIndex >= words.length) return;
+        state.currentWordHadMistake = true;
+        if (!state.wrongWordIndexes.has(state.wordIndex)) {
+          state.wrongWordIndexes.add(state.wordIndex);
+          state.wrongWords++;
+          renderPassage();
+          renderStats();
+        }
+      }
+      function clearConfetti() {
+        if (confettiCleanupTimer) {
+          clearTimeout(confettiCleanupTimer);
+          confettiCleanupTimer = null;
+        }
+        if (el.confetti) {
+          el.confetti.classList.remove('show');
+          el.confetti.replaceChildren();
+        }
+      }
+      function launchConfetti() {
+        clearConfetti();
+        if (!el.confetti) return;
+        const layer = el.confetti;
+        const colors = ['#c7f36b', '#78a9ff', '#ff7c88', '#ffd66b', '#b69cff', '#ffffff', '#5eead4'];
+        const popperLeft = document.createElement('span');
+        popperLeft.className = 'confetti-popper left';
+        popperLeft.textContent = '🎉';
+        const popperRight = document.createElement('span');
+        popperRight.className = 'confetti-popper right';
+        popperRight.textContent = '🎉';
+        layer.append(popperLeft, popperRight);
+        for (let i = 0; i < 110; i++) {
+          const piece = document.createElement('span');
+          const fromLeft = i % 2 === 0;
+          const sideOffset = 3 + Math.random() * 11;
+          piece.className = 'confetti-piece';
+          piece.style.left = fromLeft ? `${sideOffset}%` : `${100 - sideOffset}%`;
+          piece.style.setProperty('--piece-size', `${5 + Math.random() * 7}px`);
+          piece.style.setProperty('--piece-radius', Math.random() > .55 ? '50%' : '2px');
+          piece.style.setProperty('--burst-x', `${(fromLeft ? 1 : -1) * (7 + Math.random() * 40)}vw`);
+          piece.style.setProperty('--burst-y', `${-25 - Math.random() * 42}vh`);
+          piece.style.setProperty('--drift-x', `${(fromLeft ? 1 : -1) * (Math.random() * 55)}vw`);
+          piece.style.setProperty('--fall-y', `${25 + Math.random() * 60}vh`);
+          piece.style.setProperty('--spin', `${(Math.random() > .5 ? 1 : -1) * (360 + Math.random() * 900)}deg`);
+          piece.style.setProperty('--delay', `${Math.random() * .28}s`);
+          piece.style.setProperty('--duration', `${2 + Math.random() * 1.1}s`);
+          piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          layer.appendChild(piece);
+        }
+        layer.classList.add('show');
+        confettiCleanupTimer = setTimeout(clearConfetti, 3600);
+      }
+      // Net KPM follows the common five-character standard: correct characters (spaces included) / 5 / minutes.
+      // Completed text contributes to net KPM; clean-word points separately account for any typing errors.
+      function kpmValue() {
+        if (!state.elapsed || state.elapsed < 0.1) return 0;
+        return Math.floor((state.correctCharacters / 5) * 60 / state.elapsed);
+      }
+      function passageCharacterCount() { return words.join(' ').length; }
+      function updateElapsed() {
+        if (state.started) state.elapsed = (performance.now() - state.startTime) / 1000;
+      }
+      function startClockOnFirstCharacter() {
+        if (state.started) return;
+        state.started = true;
+        el.level.disabled = true;
+        state.startTime = performance.now();
+        state.elapsed = 0;
+        setMessage('Waktu mulai dihitung. Ketik dengan teliti dan pacu mobilmu menuju garis finis!');
+      }
+      function animateExhaust() {
+        el.playerCar.classList.add('moving');
+        if (flameTimeout) clearTimeout(flameTimeout);
+        flameTimeout = setTimeout(() => {
+          el.playerCar.classList.remove('moving');
+          flameTimeout = null;
+        }, 520);
+      }
+      function formatTime(seconds) {
+        const total = Math.max(0, Math.floor(seconds || 0));
+        const minutes = String(Math.floor(total / 60)).padStart(2, '0');
+        const secs = String(total % 60).padStart(2, '0');
+        return `${minutes}:${secs}`;
+      }
+      function setFeedback(message, type = '') {
+        el.feedback.textContent = message;
+        el.feedback.className = `feedback${type ? ' ' + type : ''}`;
+      }
+      function setMessage(message) { el.raceMessage.textContent = message; }
+
+      function renderPassage() {
+        el.passage.replaceChildren();
+        words.forEach((word, i) => {
+          const span = document.createElement('span');
+          const hasMistake = state.wrongWordIndexes && state.wrongWordIndexes.has(i);
+          span.className = 'word' + (i < state.wordIndex ? ' done' : i === state.wordIndex ? ' current' : '') + (hasMistake ? ' word-error' : '');
+          span.textContent = word;
+          el.passage.appendChild(span);
+          if (i < words.length - 1) el.passage.appendChild(document.createTextNode(' '));
+        });
+        const target = words[state.wordIndex];
+        el.target.textContent = target || 'FINISH!';
+        el.words.textContent = state.correctWords;
+        el.wrongWords.textContent = state.wrongWords;
+        el.wordSub.textContent = `dari ${words.length} kata`;
+      }
+
+      function renderStats() {
+        const kpm = kpmValue();
+        el.kpm.textContent = kpm;
+        el.accuracy.textContent = accuracyValue();
+        el.words.textContent = state.correctWords;
+        el.wrongWords.textContent = state.wrongWords;
+        el.time.textContent = formatTime(state.elapsed);
+        el.chartTime.textContent = `${Math.floor(state.elapsed)} detik`;
+      }
+
+      function renderRace() {
+        const totalChars = passageCharacterCount();
+        const playerProgress = totalChars ? state.correctCharacters / totalChars : 0;
+        const rivalProgress = totalChars ? Math.min(1, ((state.elapsed / 60) * currentLevel().rivalKpm * 5) / totalChars) : 0;
+        // Position each car in pixels based on the current lane width. This keeps
+        // the cars fully inside the track on narrow phones and resized desktop windows.
+        const placeCar = (car, progress) => {
+          const laneWidth = car.parentElement ? car.parentElement.clientWidth : 0;
+          if (!laneWidth) {
+            car.style.left = `${5 + Math.max(0, Math.min(1, progress)) * 82}%`;
+            return;
+          }
+          const carWidth = car.getBoundingClientRect().width || 56;
+          const startX = Math.min(laneWidth * 0.05, Math.max(0, laneWidth - carWidth));
+          const finishX = Math.max(startX, laneWidth * 0.95 - carWidth - 2);
+          const safeProgress = Math.max(0, Math.min(1, progress));
+          car.style.left = `${startX + (finishX - startX) * safeProgress}px`;
+        };
+        placeCar(el.playerCar, playerProgress);
+        placeCar(el.rivalCar, rivalProgress);
+        el.rivalName.textContent = `Lawan · ${currentLevel().rivalKpm} KPM`;
+        if (state.active) {
+          el.raceStatus.textContent = state.rivalFinished ? 'Lawan finis' : 'Balapan berlangsung';
+        } else if (state.ended) {
+          el.raceStatus.textContent = 'Sesi selesai';
+        } else {
+          el.raceStatus.textContent = 'Siap di garis start';
+        }
+      }
+
+      function drawChart() {
+        const canvas = el.chart;
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const w = rect.width, h = rect.height;
+        const pad = { left: 34, right: 10, top: 13, bottom: 28 };
+        const cw = w - pad.left - pad.right;
+        const ch = h - pad.top - pad.bottom;
+        ctx.clearRect(0, 0, w, h);
+        ctx.font = '10px system-ui, sans-serif';
+        ctx.lineWidth = 1;
+        const maxObserved = Math.max(5, ...state.graphPoints.map(p => p.kpm));
+        const yMax = Math.max(10, Math.ceil(maxObserved / 5) * 5);
+        for (let i = 0; i <= 4; i++) {
+          const value = yMax - (yMax / 4) * i;
+          const y = pad.top + (ch / 4) * i;
+          ctx.strokeStyle = 'rgba(170,190,230,.12)';
+          ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+          ctx.fillStyle = '#7f8db0'; ctx.textAlign = 'right';
+          ctx.fillText(String(Math.round(value)), pad.left - 7, y + 3);
+        }
+        const maxT = Math.max(15, state.elapsed, ...state.graphPoints.map(p => p.t));
+        ctx.fillStyle = '#7f8db0'; ctx.textAlign = 'left';
+        ctx.fillText('0 dtk', pad.left, h - 8);
+        ctx.textAlign = 'right'; ctx.fillText(`${Math.round(maxT)} dtk`, w - pad.right, h - 8);
+        const pts = state.graphPoints;
+        if (pts.length > 1) {
+          ctx.beginPath();
+          pts.forEach((p, i) => {
+            const x = pad.left + (p.t / maxT) * cw;
+            const y = pad.top + ch - (Math.min(yMax, p.kpm) / yMax) * ch;
+            if (!i) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = '#c7f36b'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+          const last = pts[pts.length - 1];
+          const x = pad.left + (last.t / maxT) * cw;
+          const y = pad.top + ch - (Math.min(yMax, last.kpm) / yMax) * ch;
+          ctx.beginPath(); ctx.arc(x, y, 3.8, 0, Math.PI * 2); ctx.fillStyle = '#c7f36b'; ctx.fill();
+        } else {
+          ctx.fillStyle = '#7f8db0'; ctx.textAlign = 'center';
+          ctx.fillText('Grafik akan muncul saat latihan berlangsung', pad.left + cw / 2, pad.top + ch / 2);
+        }
+      }
+
+      function initPreview() {
+        clearConfetti();
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        state = newState();
+        words = choosePassage(el.level.value).trim().split(/\s+/);
+        el.playerCar.classList.remove('moving');
+        el.input.value = '';
+        el.input.disabled = true;
+        el.submit.disabled = true;
+        el.start.hidden = false;
+        el.start.disabled = false;
+        el.start.textContent = 'Mulai balapan →';
+        el.again.hidden = true;
+        el.level.disabled = false;
+        el.resultPanel.classList.remove('show');
+        latestResult = null;
+        renderPassage(); renderStats(); renderRace(); drawChart();
+        setMessage('Siap! Waktu mulai dihitung saat kamu menekan karakter pertama. Setiap kata benar membawa mobilmu menuju finis.');
+        setFeedback('Tekan tombol mulai untuk memulai latihan.');
+        el.input.placeholder = 'Tekan Mulai Balapan dahulu…';
+      }
+
+      function startGame(useNewPassage = false) {
+        clearConfetti();
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        state = newState();
+        if (useNewPassage) words = choosePassage(el.level.value).trim().split(/\s+/);
+        state.active = true;
+        state.started = false; // timing begins with the first typed character, as in many typing tests
+        state.startTime = 0;
+        el.playerCar.classList.remove('moving');
+        el.level.disabled = false;
+        el.start.hidden = true;
+        el.again.hidden = true;
+        el.resultPanel.classList.remove('show');
+        el.input.disabled = false;
+        el.submit.disabled = false;
+        el.input.value = '';
+        el.input.placeholder = 'Ketik kata yang disorot…';
+        renderPassage(); renderStats(); renderRace(); drawChart();
+        setMessage('Siap! Waktu mulai dihitung saat kamu menekan karakter pertama. Setiap kata benar membawa mobilmu menuju finis.');
+        setFeedback('Fokus pada ketepatan terlebih dahulu. Kecepatan akan meningkat dengan latihan.', 'good');
+        el.input.focus();
+        timerId = setInterval(tick, 250);
+      }
+
+      function tick() {
+        if (!state.active) return;
+        if (!state.started) {
+          renderStats(); renderRace(); drawChart();
+          return;
+        }
+        updateElapsed();
+        const elapsedWhole = Math.floor(state.elapsed);
+        if (elapsedWhole >= state.lastSample + 3) {
+          state.lastSample = elapsedWhole;
+          state.graphPoints.push({ t: state.elapsed, kpm: kpmValue() });
+        }
+        const rivalFinishTime = (passageCharacterCount() / 5) / currentLevel().rivalKpm * 60;
+        if (!state.rivalFinished && state.elapsed >= rivalFinishTime) {
+          state.rivalFinished = true;
+          setMessage('Lawan sudah melewati garis finis. Tetap lanjutkan latihanmu—hasil mengetikmu tetap akan dihitung!');
+        }
+        renderStats(); renderRace(); drawChart();
+      }
+
+      function submitWord(fromSpace = false) {
+        if (!state.active) return;
+        updateElapsed();
+        const typed = el.input.value;
+        const target = words[state.wordIndex];
+        if (!typed.length) {
+          setFeedback('Ketik kata yang disorot terlebih dahulu.', 'bad');
+          el.input.focus(); return;
+        }
+        // Exact match is used; all passages are lowercase and contain no punctuation.
+        if (typed !== target) {
+          markCurrentWordWrong();
+          setFeedback('Belum tepat. Periksa huruf dan spasinya, lalu perbaiki. Kata ini tetap tercatat sebagai kata salah.', 'bad');
+          el.input.focus(); return;
+        }
+        const isLastWord = state.wordIndex === words.length - 1;
+        // The separator between words is part of the passage score. Space is counted
+        // by keydown; Enter/button submission adds the equivalent separator here.
+        if (!isLastWord) {
+          if (fromSpace) state.correctKeyPresses++;
+          else { state.keyPresses++; state.correctKeyPresses++; }
+        }
+        const hadMistake = state.currentWordHadMistake;
+        if (!hadMistake) state.correctWords++;
+        state.correctCharacters += target.length + (isLastWord ? 0 : 1); // race progress tracks completed words; clean-word score is tracked separately
+        state.wordIndex++;
+        state.currentWordHadMistake = false;
+        el.input.value = '';
+        animateExhaust();
+        renderPassage(); renderStats(); renderRace(); drawChart();
+        if (state.wordIndex >= words.length) {
+          finishGame();
+          return;
+        }
+        setFeedback(hadMistake ? 'Kata berhasil diperbaiki, tetapi tetap dihitung sebagai kata salah dan tidak mendapat poin kata benar.' : 'Benar! Mobilmu melesat. Lanjut ke kata berikutnya.', hadMistake ? 'bad' : 'good');
+        if (!state.rivalFinished) setMessage(hadMistake ? 'Kata selesai, tetapi kesalahan yang terjadi tetap tercatat pada hasil.' : 'Mantap! Kata yang benar menambah progres mobilmu.');
+        el.input.focus();
+      }
+
+      function finishGame() {
+        if (!state.active) return;
+        updateElapsed();
+        state.active = false;
+        state.ended = true;
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        const finalKpmValue = kpmValue();
+        const finalAccuracyValue = accuracyValue();
+        const rivalFinishTime = (passageCharacterCount() / 5) / currentLevel().rivalKpm * 60;
+        const won = state.elapsed < rivalFinishTime;
+        if (!state.graphPoints.length || state.graphPoints[state.graphPoints.length - 1].t !== state.elapsed) {
+          state.graphPoints.push({ t: state.elapsed, kpm: finalKpmValue });
+        } else {
+          state.graphPoints[state.graphPoints.length - 1].kpm = finalKpmValue;
+        }
+        renderStats(); renderRace(); drawChart();
+        el.input.disabled = true;
+        el.submit.disabled = true;
+        el.level.disabled = false;
+        el.again.hidden = false;
+        el.raceStatus.textContent = 'Sesi selesai';
+        el.target.textContent = 'SELESAI!';
+        setFeedback('Latihan selesai. Lihat ringkasan hasilmu di bawah.', 'good');
+        setMessage(won ? '🏁 Kamu menyelesaikan teks lebih dahulu dari lawan. Selamat!' : '🏁 Teks selesai! Lawan mencapai finis lebih dahulu, tetapi kamu tetap menuntaskan latihan.');
+        el.resultTitle.textContent = won ? 'Kamu menang!' : 'Latihan selesai!';
+        el.resultDescription.textContent = won ? 'Kamu mencapai garis finis lebih dahulu. Pertahankan ketepatanmu!' : 'Kamu berhasil menyelesaikan semua kata. Coba lagi untuk meningkatkan kecepatan dan akurasi.';
+        el.resultEmoji.textContent = won ? '🏆' : '🏁';
+        el.finalKpm.textContent = `${finalKpmValue} KPM`;
+        el.finalAccuracy.textContent = `${finalAccuracyValue}%`;
+        el.finalTime.textContent = formatTime(state.elapsed);
+        el.finalWords.textContent = state.correctWords;
+        el.finalWrongWords.textContent = state.wrongWords;
+        el.resultPanel.classList.add('show');
+        if (won) launchConfetti();
+        latestResult = {
+          nama: 'Pemain', level: currentLevel().label,
+          kata_benar: state.correctWords, kata_salah: state.wrongWords, total_kata: words.length,
+          karakter_benar: state.correctCharacters, total_karakter_diketik: state.keyPresses,
+          karakter_benar_percobaan: state.correctKeyPresses,
+          kpm: finalKpmValue, akurasi_persen: finalAccuracyValue,
+          durasi_detik: Math.round(state.elapsed), metode_kpm: 'Karakter benar termasuk spasi / 5 / durasi dalam menit',
+          hasil_balapan: won ? 'Menang' : 'Selesai setelah lawan',
+          grafik: state.graphPoints.map(p => ({ detik: Math.round(p.t), kpm: p.kpm }))
+        };
+        el.resultPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function downloadCSV() {
+        if (!latestResult) return;
+        const rows = [
+          ['Data Hasil DragType'],
+          ['Nama', latestResult.nama], ['Tingkat', latestResult.level],
+          ['Kata Benar (tanpa kesalahan)', latestResult.kata_benar], ['Kata Salah (pernah mengandung kesalahan)', latestResult.kata_salah], ['Total Kata', latestResult.total_kata],
+          ['Karakter Benar (termasuk spasi)', latestResult.karakter_benar],
+          ['Percobaan Karakter', latestResult.total_karakter_diketik],
+          ['Percobaan Karakter Benar', latestResult.karakter_benar_percobaan],
+          ['Kecepatan (KPM net)', latestResult.kpm], ['Metode KPM', latestResult.metode_kpm],
+          ['Akurasi (%)', latestResult.akurasi_persen],
+          ['Durasi (detik)', latestResult.durasi_detik], ['Hasil Balapan', latestResult.hasil_balapan], [],
+          ['Detik', 'KPM'], ...latestResult.grafik.map(p => [p.detik, p.kpm])
+        ];
+        const csv = rows.map(row => row.map(value => `"${String(value ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `hasil-dragtype-${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      }
+
+      function refreshPassage() {
+        if (state.active) {
+          // Replace the text and begin a fresh attempt; timing still starts on the first character.
+          startGame(true);
+          setFeedback('Kalimat diganti. Waktu mulai dihitung dari karakter pertama.', 'good');
+        } else {
+          // In the preview or after finishing, show a new sentence and return to the ready state.
+          initPreview();
+          setFeedback('Kalimat baru sudah dipilih. Tekan Mulai balapan saat siap.', 'good');
+        }
+      }
+
+      el.refresh.addEventListener('click', refreshPassage);
+      el.start.addEventListener('click', () => startGame(false));
+      el.again.addEventListener('click', () => startGame(true));
+      el.resultAgain.addEventListener('click', () => startGame(true));
+      el.submit.addEventListener('click', () => submitWord(false));
+      el.download.addEventListener('click', downloadCSV);
+      el.level.addEventListener('change', () => {
+        if (state.active && !state.started) {
+          words = choosePassage(el.level.value).trim().split(/\s+/);
+          state.wordIndex = 0;
+          state.correctWords = 0;
+          state.wrongWords = 0;
+          state.currentWordHadMistake = false;
+          state.wrongWordIndexes = new Set();
+          state.correctCharacters = 0;
+          state.keyPresses = 0;
+          state.correctKeyPresses = 0;
+          state.graphPoints = [{ t: 0, kpm: 0 }];
+          renderPassage(); renderStats(); renderRace(); drawChart();
+          setMessage(`Tingkat ${currentLevel().label} dipilih. Mulai mengetik kapan saja untuk memulai waktu.`);
+          setFeedback('Tingkat latihan berhasil diubah.', 'good');
+          el.input.focus();
+        } else {
+          initPreview();
+        }
+      });
+
+      const homeScreen = $('homeScreen');
+      const howToScreen = $('howToScreen');
+      const gameScreen = $('gameScreen');
+      function showHomeMenu() {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        gameScreen.hidden = true;
+        howToScreen.hidden = true;
+        homeScreen.hidden = false;
+        initPreview();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      $('menuStartBtn').addEventListener('click', () => {
+        homeScreen.hidden = true;
+        howToScreen.hidden = true;
+        gameScreen.hidden = false;
+        startGame(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.requestAnimationFrame(drawChart);
+      });
+      $('menuHowToBtn').addEventListener('click', () => {
+        homeScreen.hidden = true;
+        gameScreen.hidden = true;
+        howToScreen.hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      $('backHomeBtn').addEventListener('click', showHomeMenu);
+      $('returnHomeBtn').addEventListener('click', showHomeMenu);
+      el.input.addEventListener('keydown', (event) => {
+        if (!state.active) { event.preventDefault(); return; }
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submitWord();
+          return;
+        }
+        if (event.key === ' ') {
+          event.preventDefault();
+          const target = words[state.wordIndex] || '';
+          const typed = el.input.value;
+          // Space is counted as a character attempt, except after the final exact word:
+          // the final word auto-submits as soon as its last character is typed.
+          if (state.started) state.keyPresses++;
+          else if (typed.length) { startClockOnFirstCharacter(); state.keyPresses++; }
+          renderStats();
+          submitWord(true);
+          return;
+        }
+        if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          startClockOnFirstCharacter();
+          const target = words[state.wordIndex] || '';
+          const cursor = el.input.selectionStart ?? el.input.value.length;
+          state.keyPresses++;
+          if (event.key === (target[cursor] || '')) state.correctKeyPresses++;
+          else markCurrentWordWrong();
+          renderStats();
+        }
+      });
+      el.input.addEventListener('input', () => {
+        if (!state.active) return;
+        const target = words[state.wordIndex];
+        if (state.wordIndex === words.length - 1 && el.input.value === target) {
+          submitWord(false);
+        }
+      });
+      el.input.addEventListener('paste', (event) => {
+        event.preventDefault();
+        setFeedback('Agar latihan mengetik terukur, masukkan kata melalui keyboard, bukan tempel teks.', 'bad');
+      });
+      window.addEventListener('resize', () => {
+        // Recalculate both the chart canvas and car positions when a desktop window
+        // is resized or a phone changes orientation.
+        requestAnimationFrame(() => { renderRace(); drawChart(); });
+      }, { passive: true });
+      window.addEventListener('orientationchange', () => {
+        requestAnimationFrame(() => { renderRace(); drawChart(); });
+      }, { passive: true });
+      initPreview();
+    })();
+  </script>
+</body>
+</html>
